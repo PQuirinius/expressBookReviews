@@ -5,14 +5,14 @@ let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
 const exists = (username) => {
-    return users.some((user) => user.username === username);
+    
   };
 
 public_users.post("/register", (req,res) => {
     const username = req.body.username;
     const password = req.body.password;
     if (username && password) {
-      if (!exists(username)) {
+      if (isValid(username)) {
         users.push({"username":username,"password":password});
         return res.status(200).json({message: "User "+username+" has been successfully registered. You can now login."});
       } else {
@@ -26,7 +26,7 @@ public_users.post("/register", (req,res) => {
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
-  //Write your code here
+
   res.send(JSON.stringify(books, null, 4));
 });
 

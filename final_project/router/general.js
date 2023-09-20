@@ -1,12 +1,11 @@
 const express = require('express');
+const axios = require('axios')
+
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
-const exists = (username) => {
-    
-  };
 
 public_users.post("/register", (req,res) => {
     const username = req.body.username;
@@ -30,12 +29,28 @@ public_users.get('/',function (req, res) {
   res.send(JSON.stringify(books, null, 4));
 });
 
+public_users.get('/async', async function (req, res) {
+    
+    
+    const response = await axios.get('http://localhost:5000/');
+    res.send(JSON.stringify(response.data, null, 4));
+  });
+
+
+
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   let isbn = req.params.isbn;
   let theBook = books[isbn];
   res.send(JSON.stringify(theBook,null,4))
  });
+
+ public_users.get('/async/isbn/:isbn', async function (req, res) {
+    const isbn = req.params.isbn;
+    
+    const response = await axios.get('http://localhost:5000/isbn/'+isbn);
+    res.send(JSON.stringify(response.data, null, 4));
+  });
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
@@ -55,6 +70,13 @@ public_users.get('/author/:author',function (req, res) {
   res.send(JSON.stringify(theBooks,null,4))
 });
 
+public_users.get('/async/author/:author', async function (req, res) {
+    const author = req.params.author;
+    
+    const response = await axios.get('http://localhost:5000/author/'+author);
+    res.send(JSON.stringify(response.data, null, 4));
+  });
+
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
     let title = req.params.title;
@@ -73,9 +95,17 @@ public_users.get('/title/:title',function (req, res) {
     res.send(JSON.stringify(theBooks,null,4))
 });
 
+public_users.get('/async/title/:title', async function (req, res) {
+    const title = req.params.title;
+    
+    const response = await axios.get('http://localhost:5000/title/'+title);
+    res.send(JSON.stringify(response.data, null, 4));
+  });
+
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
   let isbn = req.params.isbn;
+  
 
   res.send(JSON.stringify(books[isbn].reviews,null,4))
 });
